@@ -13,7 +13,7 @@ void main() {
         backgroundColor: AppColors.mainDarkBlue,
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.mainDarkBlue,
+        backgroundColor: AppColors.mainLightBlue,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white70,
       ),
