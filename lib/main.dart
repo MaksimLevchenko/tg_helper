@@ -7,13 +7,14 @@ void main() {
   runApp(MaterialApp(
     theme: ThemeData(
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.mainDarkBlue,
+        seedColor: DarkThemeAppColors.primaryColor,
+        brightness: Brightness.dark,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.mainDarkBlue,
+        backgroundColor: DarkThemeAppColors.primaryColor,
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.mainLightBlue,
+        backgroundColor: DarkThemeAppColors.backgroundColor,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white70,
       ),
