@@ -1,6 +1,5 @@
 class Countries {
   static List<Map<String, String>> countries = [
-    {"code": "+7 840", "name": "Abkhazia", "flag": "🇦🇧"},
     {"code": "+93", "name": "Afghanistan", "flag": "🇦🇫"},
     {"code": "+355", "name": "Albania", "flag": "🇦🇱"},
     {"code": "+213", "name": "Algeria", "flag": "🇩🇿"},
