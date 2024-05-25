@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tg_helper/style/app_colors.dart';
 import 'package:flutter_tg_helper/style/text_style.dart';
 
 class MainPage extends StatefulWidget {
@@ -37,6 +38,15 @@ class _MainPageState extends State<MainPage> {
     ];
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: DarkThemeAppColors.backgroundColor,
+          elevation: 0,
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(0),
+            child: Container(
+              color: Colors.black,
+              height: 1,
+            ),
+          ),
           title: Text(
             'Main Page',
             style: AppTextStyle.textStyle.copyWith(
