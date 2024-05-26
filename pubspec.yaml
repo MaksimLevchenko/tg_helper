@@ -10,7 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   rename: ^3.0.2
-  tdlib: ^1.6.0
+  tdlib:
+    path: ./tg_lib
 
 dev_dependencies:
   flutter_test:
