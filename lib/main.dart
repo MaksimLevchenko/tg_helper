@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tg_helper/pages/login_page.dart';
 import 'package:flutter_tg_helper/pages/main_page.dart';
+import 'package:flutter_tg_helper/pages/splash.dart';
 import 'package:flutter_tg_helper/style/app_colors.dart';
-import 'package:tdlib/tdlib.dart';
 
 void main() async {
-  await TdPlugin.initialize();
   runApp(MaterialApp(
     theme: ThemeData(
       colorScheme: ColorScheme.fromSeed(
@@ -22,7 +21,8 @@ void main() async {
       ),
     ),
     routes: {
-      '/': (context) => const LoginPage(),
+      '/': (context) => const SplashScreen(),
+      '/login': (context) => const LoginPage(),
       '/home': (context) => const MainPage(),
     },
     initialRoute: '/',
