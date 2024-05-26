@@ -96,10 +96,13 @@ class _LoginPageState extends State<LoginPage> {
       decoration: BoxDecoration(
         color: DarkThemeAppColors.backgroundColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: DarkThemeAppColors.primaryColor,
-          width: 2,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: DarkThemeAppColors.gray.withOpacity(0.2),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: ListView.builder(
         shrinkWrap: true,
@@ -111,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
               _countryController.text = country['name']!;
               _countryFocusNode.unfocus();
             },
-            contentPadding: EdgeInsets.symmetric(horizontal: 16),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             title: Text(country['name']!,
                 style: AppTextStyle.textStyle
                     .copyWith(fontWeight: FontWeight.w400)),
@@ -134,31 +137,28 @@ class _LoginPageState extends State<LoginPage> {
         controller: scrollController,
         child: SafeArea(
           minimum: const EdgeInsets.all(16),
-          child: SingleChildScrollView(
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 48),
-                    logoImage(),
-                    const SizedBox(height: 16),
-                    headerText(),
-                    helperText(),
-                    const SizedBox(height: 48),
-                    LoginForm(
-                        formKey: _formKey,
-                        phoneController: _phoneController,
-                        phoneFocusNode: _phoneFocusNode,
-                        countryFocusNode: _countryFocusNode,
-                        countryController: _countryController,
-                        countryFieldKey: _countryFieldKey,
-                        context: context),
-                  ],
-                ),
-                _countryFocusNode.hasFocus ? searchList() : const SizedBox(),
-              ],
-            ),
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  const SizedBox(height: 48),
+                  logoImage(),
+                  const SizedBox(height: 16),
+                  headerText(),
+                  helperText(),
+                  const SizedBox(height: 48),
+                  LoginForm(
+                      formKey: _formKey,
+                      phoneController: _phoneController,
+                      phoneFocusNode: _phoneFocusNode,
+                      countryFocusNode: _countryFocusNode,
+                      countryController: _countryController,
+                      countryFieldKey: _countryFieldKey,
+                      context: context),
+                ],
+              ),
+              _countryFocusNode.hasFocus ? searchList() : const SizedBox(),
+            ],
           ),
         ),
       ),
