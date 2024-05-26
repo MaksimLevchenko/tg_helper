@@ -145,10 +145,10 @@ class _LoginFormState extends State<LoginForm> {
           _isCountryValid = false;
           return 'Please enter your country';
         }
-        if (!Countries.countries.any((element) => element['name'] == value)) {
-          _isCountryValid = false;
-          return 'Please enter a valid country';
-        }
+        // if (!Countries.countries.any((element) => element['name'] == value)) {
+        //   _isCountryValid = false;
+        //   return 'Please enter a valid country';
+        // }
         return null;
       },
     );
@@ -188,9 +188,9 @@ class _LoginFormState extends State<LoginForm> {
       countryCode = '';
     } else {
       try {
-        final country = Countries.countries.firstWhere(
-            (element) => element['name'] == widget._countryController.text);
-        countryCode = country['code']!;
+        final country = CountriesList.countries.firstWhere(
+            (element) => element.name == widget._countryController.text);
+        countryCode = country.countryCode;
       } catch (e) {
         countryCode = '';
       }

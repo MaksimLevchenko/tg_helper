@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_tg_helper/res/app_icons.dart';
 import 'package:flutter_tg_helper/res/countries.dart';
 import 'package:flutter_tg_helper/style/app_colors.dart';
 import 'package:flutter_tg_helper/style/text_style.dart';
 import 'package:flutter_tg_helper/widgets/login_form.dart';
+import 'package:tdlib/td_api.dart' as td;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -66,16 +69,17 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  List<Map<String, String>> suggestionsWidgetsBuilder(context, controller) {
-    final String searchedCountrys = controller.text.toLowerCase();
-    final List<Map<String, String>> acceptableCountries = [];
-    for (var country in Countries.countries) {
-      if (country['name']!.toLowerCase().contains(searchedCountrys)) {
+  List<td.CountryInfo> suggestionsWidgetsBuilder(context, controller) {
+    final String searchedCountries = controller.text.toLowerCase();
+    final List<td.CountryInfo> acceptableCountries = [];
+    log(CountriesList.countries.first.toString());
+    for (var country in CountriesList.countries) {
+      if (country.name.toLowerCase().contains(searchedCountries)) {
         acceptableCountries.add(country);
       }
     }
     if (acceptableCountries.isEmpty) {
-      acceptableCountries.addAll(Countries.countries);
+      acceptableCountries.addAll(CountriesList.countries);
     }
     return acceptableCountries;
   }
@@ -111,16 +115,16 @@ class _LoginPageState extends State<LoginPage> {
           final country = countries[index];
           return ListTile(
             onTap: () {
-              _countryController.text = country['name']!;
+              _countryController.text = country.name;
               _countryFocusNode.unfocus();
             },
             contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-            title: Text(country['name']!,
+            title: Text(country.name,
                 style: AppTextStyle.textStyle
                     .copyWith(fontWeight: FontWeight.w400)),
             leading:
-                Text(country['flag']!, style: const TextStyle(fontSize: 24)),
-            trailing: Text(country['code']!,
+                Text(country.countryCode, style: const TextStyle(fontSize: 24)),
+            trailing: Text(country.callingCodes.first,
                 style: AppTextStyle.textStyle
                     .copyWith(color: DarkThemeAppColors.unfocusedTextColor)),
           );

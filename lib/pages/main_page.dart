@@ -28,7 +28,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> widgetList = [
-      ChatsPage(),
+      const ChatsPage(),
       settingsPage(),
     ];
     return Scaffold(
