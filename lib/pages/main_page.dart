@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tg_helper/style/app_colors.dart';
 import 'package:flutter_tg_helper/style/text_style.dart';
+import 'package:flutter_tg_helper/widgets/contacts_widget.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -11,12 +12,6 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int bottomAppBarValue = 0;
-
-  Widget homePage() {
-    return const Center(
-      child: Text('Welcome to the main page!'),
-    );
-  }
 
   Widget settingsPage() {
     return const Center(
@@ -33,7 +28,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> widgetList = [
-      homePage(),
+      ChatsPage(),
       settingsPage(),
     ];
     return Scaffold(
@@ -61,8 +56,8 @@ class _MainPageState extends State<MainPage> {
           currentIndex: bottomAppBarValue,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
+              icon: Icon(Icons.chat),
+              label: 'Chats',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),
