@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tg_helper/style/app_colors.dart';
 import 'package:flutter_tg_helper/style/text_style.dart';
-import 'package:flutter_tg_helper/widgets/contacts_widget.dart';
+import 'package:flutter_tg_helper/pages/main_screen/contacts/contacts_widget.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});

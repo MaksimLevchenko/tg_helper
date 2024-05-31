@@ -9,7 +9,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Utils.initialize().then((_) async {
       await CountriesList.loadCountries();
-      Navigator.pushReplacementNamed(context, '/login');
+      if (context.mounted) Navigator.pushReplacementNamed(context, '/login');
     });
     return Container(
       color: Colors.white,
