@@ -5,7 +5,7 @@ import 'package:flutter_tg_helper/res/app_icons.dart';
 import 'package:flutter_tg_helper/res/countries.dart';
 import 'package:flutter_tg_helper/style/app_colors.dart';
 import 'package:flutter_tg_helper/style/text_style.dart';
-import 'package:flutter_tg_helper/widgets/login_form.dart';
+import 'package:flutter_tg_helper/pages/login_screen/login_form/login_form.dart';
 import 'package:tdlib/td_api.dart' as td;
 
 class LoginPage extends StatefulWidget {
@@ -122,8 +122,8 @@ class _LoginPageState extends State<LoginPage> {
             title: Text(country.name,
                 style: AppTextStyle.textStyle
                     .copyWith(fontWeight: FontWeight.w400)),
-            leading:
-                Text(country.countryCode, style: const TextStyle(fontSize: 24)),
+            leading: Text(getFlagFromCode(country.countryCode),
+                style: const TextStyle(fontSize: 24)),
             trailing: Text(country.callingCodes.first,
                 style: AppTextStyle.textStyle
                     .copyWith(color: DarkThemeAppColors.unfocusedTextColor)),
@@ -131,6 +131,13 @@ class _LoginPageState extends State<LoginPage> {
         },
       ),
     );
+  }
+
+  String getFlagFromCode(String countryCode) {
+    final String upperCode = countryCode.toUpperCase();
+    String flagEmoji = upperCode.replaceAllMapped(RegExp(r'[A-Z]'),
+        (match) => String.fromCharCode(match.group(0)!.codeUnitAt(0) + 127397));
+    return flagEmoji;
   }
 
   @override

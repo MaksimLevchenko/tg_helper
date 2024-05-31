@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tg_helper/pages/login_page.dart';
-import 'package:flutter_tg_helper/pages/main_page.dart';
-import 'package:flutter_tg_helper/pages/splash.dart';
+import 'package:flutter_tg_helper/pages/login_screen/login_page.dart';
+import 'package:flutter_tg_helper/pages/main_screen/main_page.dart';
+import 'package:flutter_tg_helper/pages/splash_screen/splash.dart';
 import 'package:flutter_tg_helper/style/app_colors.dart';
 
 void main() async {
