@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_tg_helper/res/countries.dart';
+import 'package:flutter_tg_helper/res/utils.dart';
 import 'package:flutter_tg_helper/style/app_colors.dart';
 import 'package:flutter_tg_helper/style/text_style.dart';
+import 'package:tdlib/td_api.dart' as td;
 
 class LoginForm extends StatefulWidget {
   const LoginForm({
@@ -43,6 +45,7 @@ class _LoginFormState extends State<LoginForm> {
   bool _keepMeLoggedIn = true;
   bool _isPhoneValid = true;
   bool _isCountryValid = true;
+  String prefix = '';
 
   @override
   void initState() {
@@ -145,6 +148,10 @@ class _LoginFormState extends State<LoginForm> {
           _isCountryValid = false;
           return 'Please enter your country';
         }
+        if (prefix == '') {
+          _isCountryValid = false;
+          return 'Please enter a valid country';
+        }
         // if (!Countries.countries.any((element) => element['name'] == value)) {
         //   _isCountryValid = false;
         //   return 'Please enter a valid country';
@@ -163,15 +170,22 @@ class _LoginFormState extends State<LoginForm> {
           borderRadius: BorderRadius.circular(16),
         ),
       ),
-      onPressed: () {
-        if (widget._formKey.currentState!.validate()) {
-          Navigator.pushReplacementNamed(context, '/home');
-        } else {
-          setState(() {});
-        }
-      },
+      onPressed: loginCheck,
       child: const Text('NEXT', style: AppTextStyle.textStyle),
     );
+  }
+
+  void loginCheck() {
+    if (widget._formKey.currentState!.validate()) {
+      Utils.client!.send(td.SetAuthenticationPhoneNumber(
+          phoneNumber: '$prefix${widget._phoneController.text}'));
+      log(Utils.authorizationState.toString());
+      //TODO: make code page
+      if (Utils.authorizationState == td.AuthorizationStateWaitCode) {}
+      //Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      setState(() {});
+    }
   }
 
   TextFormField numberField(BorderSide enabledBorderSide) {
@@ -183,21 +197,20 @@ class _LoginFormState extends State<LoginForm> {
     } else {
       labelColor = Colors.red;
     }
-    late final String countryCode;
     if (widget._countryController.text.isEmpty) {
-      countryCode = '';
+      prefix = '';
     } else {
       try {
         final country = CountriesList.countries.firstWhere(
             (element) => element.name == widget._countryController.text);
-        countryCode = country.countryCode;
+        prefix = country.callingCodes.first;
       } catch (e) {
-        countryCode = '';
+        prefix = '';
       }
     }
     return TextFormField(
       decoration: InputDecoration(
-        prefixText: '$countryCode ',
+        prefixText: prefix == '' ? '' : '+$prefix ',
         prefixStyle: AppTextStyle.textStyle.copyWith(fontSize: 17.5),
         labelText: 'Number',
         labelStyle: AppTextStyle.textStyle.copyWith(color: labelColor),

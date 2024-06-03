@@ -16,12 +16,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _phoneController = TextEditingController(text: '1001001010');
+  final _phoneController = TextEditingController(text: '9996625555');
   final _phoneFocusNode = FocusNode();
   final _countryController = TextEditingController();
   final _countryFocusNode = FocusNode();
   final _formKey = GlobalKey<FormState>();
   final _countryFieldKey = GlobalKey();
+  String? selectedCountry;
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -129,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                   AppTextStyle.textStyle.copyWith(fontWeight: FontWeight.w400)),
           leading: Text(getFlagFromCode(country.countryCode),
               style: const TextStyle(fontSize: 24)),
-          trailing: Text(country.callingCodes.first,
+          trailing: Text('+${country.callingCodes.first}',
               style: AppTextStyle.textStyle
                   .copyWith(color: DarkThemeAppColors.unfocusedTextColor)),
         );
