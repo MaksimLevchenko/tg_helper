@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_tg_helper/app_api.dart';
-import 'package:flutter_tg_helper/res/countries.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tdlib/td_client.dart';
 import 'package:tdlib/td_api.dart' as td;

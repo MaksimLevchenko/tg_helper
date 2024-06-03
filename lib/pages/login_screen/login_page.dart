@@ -108,28 +108,32 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       ),
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: countries.length,
-        itemBuilder: (context, index) {
-          final country = countries[index];
-          return ListTile(
-            onTap: () {
-              _countryController.text = country.name;
-              _countryFocusNode.unfocus();
-            },
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-            title: Text(country.name,
-                style: AppTextStyle.textStyle
-                    .copyWith(fontWeight: FontWeight.w400)),
-            leading: Text(getFlagFromCode(country.countryCode),
-                style: const TextStyle(fontSize: 24)),
-            trailing: Text(country.callingCodes.first,
-                style: AppTextStyle.textStyle
-                    .copyWith(color: DarkThemeAppColors.unfocusedTextColor)),
-          );
-        },
-      ),
+      child: buildCountries(countries),
+    );
+  }
+
+  ListView buildCountries(List<td.CountryInfo> countries) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: countries.length,
+      itemBuilder: (context, index) {
+        final country = countries[index];
+        return ListTile(
+          onTap: () {
+            _countryController.text = country.name;
+            _countryFocusNode.unfocus();
+          },
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          title: Text(country.name,
+              style:
+                  AppTextStyle.textStyle.copyWith(fontWeight: FontWeight.w400)),
+          leading: Text(getFlagFromCode(country.countryCode),
+              style: const TextStyle(fontSize: 24)),
+          trailing: Text(country.callingCodes.first,
+              style: AppTextStyle.textStyle
+                  .copyWith(color: DarkThemeAppColors.unfocusedTextColor)),
+        );
+      },
     );
   }
 
