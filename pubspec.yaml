@@ -14,6 +14,7 @@ dependencies:
   rename: ^3.0.2
   tdlib:
     path: ./tg_lib
+  provider:
 
 dev_dependencies:
   flutter_test:

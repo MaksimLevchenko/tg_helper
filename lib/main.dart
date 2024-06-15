@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tg_helper/pages/login_screen/login_page.dart';
+import 'package:flutter_tg_helper/pages/login_screen/code_screen/code_page.dart';
+import 'package:flutter_tg_helper/pages/login_screen/login_form/login_page.dart';
 import 'package:flutter_tg_helper/pages/main_screen/main_page.dart';
 import 'package:flutter_tg_helper/pages/splash_screen/splash.dart';
 import 'package:flutter_tg_helper/style/app_colors.dart';
@@ -22,7 +23,8 @@ void main() async {
     ),
     routes: {
       '/': (context) => const SplashScreen(),
-      '/login': (context) => const LoginPage(),
+      '/login': (context) => LoginPage(),
+      '/login/code': (context) => LoginCodePage(),
       '/home': (context) => const MainPage(),
     },
     initialRoute: '/',

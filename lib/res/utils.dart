@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter_tg_helper/app_api.dart';
@@ -81,11 +82,14 @@ class Utils {
     _clientStreamSubscription?.cancel();
     _clientStreamSubscription =
         client!.updates.asBroadcastStream().listen((event) {
+      log('event runtime type: ${event.runtimeType}');
       lastEvent = event;
       if (event is td.UpdateAuthorizationState) {
         authorizationState = event.authorizationState;
+        log('Authorization state runtime type: ${event.authorizationState}');
         _onAuthorizationUpdate();
       } else if (event is td.UpdateConnectionState) {
+        log('connection state runtime type: ${event.state}');
         connectionState = event.state;
       }
     });

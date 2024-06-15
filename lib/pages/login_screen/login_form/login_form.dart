@@ -1,35 +1,32 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_tg_helper/models/account.dart';
 import 'package:flutter_tg_helper/res/countries.dart';
 import 'package:flutter_tg_helper/res/utils.dart';
 import 'package:flutter_tg_helper/style/app_colors.dart';
 import 'package:flutter_tg_helper/style/text_style.dart';
+import 'package:provider/provider.dart';
 import 'package:tdlib/td_api.dart' as td;
 
 class LoginForm extends StatefulWidget {
   const LoginForm({
     super.key,
-    required TextEditingController phoneController,
     required FocusNode phoneFocusNode,
     required FocusNode countryFocusNode,
     required TextEditingController countryController,
     required countryFieldKey,
-    required this.context,
     required formKey,
-  })  : _phoneController = phoneController,
-        _phoneFocusNode = phoneFocusNode,
+  })  : _phoneFocusNode = phoneFocusNode,
         _countryFocusNode = countryFocusNode,
         _countryController = countryController,
         _countryFieldKey = countryFieldKey,
         _formKey = formKey;
 
   final GlobalKey<FormState> _formKey;
-  final TextEditingController _phoneController;
   final FocusNode _phoneFocusNode;
   final TextEditingController _countryController;
   final FocusNode _countryFocusNode;
-  final BuildContext context;
   final GlobalKey _countryFieldKey;
 
   final BorderSide enabledBorderSide = const BorderSide(
@@ -42,24 +39,20 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  bool _keepMeLoggedIn = true;
   bool _isPhoneValid = true;
   bool _isCountryValid = true;
-  String prefix = '';
 
   @override
   void initState() {
     super.initState();
     widget._phoneFocusNode.addListener(() {
       log('Phone focus: ${widget._phoneFocusNode.hasFocus}');
-      setState(() {});
+      if (mounted) setState(() {});
     });
   }
 
   @override
   void dispose() {
-    widget._phoneFocusNode.dispose();
-    widget._countryFocusNode.dispose();
     super.dispose();
   }
 
@@ -75,7 +68,7 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(height: 16),
           keepMeSignedInCheckbox(),
           const SizedBox(height: 32),
-          widget._phoneController.text.length > 5
+          Provider.of<Account>(context).number.toString().length > 5
               ? loginButton(context)
               : const SizedBox(),
         ],
@@ -93,11 +86,10 @@ class _LoginFormState extends State<LoginForm> {
             ),
             activeColor: DarkThemeAppColors.primaryColor,
             checkColor: DarkThemeAppColors.textColor,
-            value: _keepMeLoggedIn,
+            value: Provider.of<Account>(context).keepMeLoggedIn,
             onChanged: (value) {
-              setState(() {
-                _keepMeLoggedIn = value!;
-              });
+              Provider.of<Account>(context, listen: false).keepMeLoggedIn =
+                  value!;
             }),
         const SizedBox(
           width: 16,
@@ -127,6 +119,19 @@ class _LoginFormState extends State<LoginForm> {
       key: widget._countryFieldKey,
       controller: widget._countryController,
       focusNode: widget._countryFocusNode,
+      onChanged: (value) {
+        if (value.isEmpty) {
+          Provider.of<Account>(context, listen: false).countryInfo = null;
+        } else {
+          try {
+            final country = CountriesList.countries.firstWhere(
+                (element) => element.name == widget._countryController.text);
+            Provider.of<Account>(context, listen: false).countryInfo = country;
+          } catch (e) {
+            Provider.of<Account>(context, listen: false).countryInfo = null;
+          }
+        }
+      },
       onTap: () {},
       decoration: InputDecoration(
         labelText: 'Country',
@@ -148,7 +153,7 @@ class _LoginFormState extends State<LoginForm> {
           _isCountryValid = false;
           return 'Please enter your country';
         }
-        if (prefix == '') {
+        if (Provider.of<Account>(context, listen: false).countryInfo == null) {
           _isCountryValid = false;
           return 'Please enter a valid country';
         }
@@ -176,12 +181,20 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void loginCheck() {
+    String prefix = Provider.of<Account>(context, listen: false)
+            .countryInfo
+            ?.callingCodes
+            .first ??
+        '';
     if (widget._formKey.currentState!.validate()) {
       Utils.client!.send(td.SetAuthenticationPhoneNumber(
-          phoneNumber: '$prefix${widget._phoneController.text}'));
+          phoneNumber:
+              '${Provider.of<Account>(context, listen: false).number}'));
       log(Utils.authorizationState.toString());
-      //TODO: make code page
-      if (Utils.authorizationState == td.AuthorizationStateWaitCode) {}
+      if (Utils.authorizationState.runtimeType ==
+          td.AuthorizationStateWaitCode) {
+        Navigator.pushNamed(context, '/login/code');
+      }
       //Navigator.pushReplacementNamed(context, '/home');
     } else {
       setState(() {});
@@ -197,21 +210,12 @@ class _LoginFormState extends State<LoginForm> {
     } else {
       labelColor = Colors.red;
     }
-    if (widget._countryController.text.isEmpty) {
-      prefix = '';
-    } else {
-      try {
-        final country = CountriesList.countries.firstWhere(
-            (element) => element.name == widget._countryController.text);
-        prefix = country.callingCodes.first;
-      } catch (e) {
-        prefix = '';
-      }
-    }
+    String? prefix =
+        Provider.of<Account>(context).countryInfo?.callingCodes.first;
     return TextFormField(
       decoration: InputDecoration(
-        prefixText: prefix == '' ? '' : '+$prefix ',
-        prefixStyle: AppTextStyle.textStyle.copyWith(fontSize: 17.5),
+        prefixText: prefix == null ? '' : '+$prefix ',
+        prefixStyle: AppTextStyle.textStyle,
         labelText: 'Number',
         labelStyle: AppTextStyle.textStyle.copyWith(color: labelColor),
         border: OutlineInputBorder(
@@ -226,10 +230,12 @@ class _LoginFormState extends State<LoginForm> {
           ),
         ),
       ),
-      onChanged: (value) => setState(() {}),
+      onChanged: (value) {
+        int? intValue = int.tryParse(value);
+        Provider.of<Account>(context, listen: false).number = intValue;
+      },
       style: AppTextStyle.textStyle,
       autofocus: false,
-      controller: widget._phoneController,
       focusNode: widget._phoneFocusNode,
       keyboardType: TextInputType.number,
       validator: (value) {
@@ -237,7 +243,7 @@ class _LoginFormState extends State<LoginForm> {
           _isPhoneValid = false;
           return 'Please enter your phone number';
         }
-        if (!value.contains(RegExp(r'^[0-9]{10}$'))) {
+        if (!value.contains(RegExp(r'^[0-9]*$'))) {
           _isPhoneValid = false;
           return 'Please enter a valid phone number';
         }
