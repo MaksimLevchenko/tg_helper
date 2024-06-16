@@ -59,7 +59,7 @@ class LoginCodePage extends StatelessWidget {
     switch (Utils.authorizationState.runtimeType) {
       case const (td.AuthorizationStateWaitRegistration):
         //TODO make registration page
-        Utils.client!.send(td.RegisterUser(
+        Utils.client!.send(const td.RegisterUser(
             firstName: 'test', lastName: 'test', disableNotification: false));
         Navigator.pushNamedAndRemoveUntil(
           context,
