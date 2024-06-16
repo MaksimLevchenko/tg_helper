@@ -23,7 +23,7 @@ void main() async {
     ),
     routes: {
       '/': (context) => const SplashScreen(),
-      '/login': (context) => LoginPage(),
+      '/login': (context) => const LoginPage(),
       '/login/code': (context) => LoginCodePage(),
       '/home': (context) => const MainPage(),
     },

@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:tdlib/td_api.dart' as td;
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();

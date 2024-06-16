@@ -56,14 +56,28 @@ class LoginCodePage extends StatelessWidget {
       return;
     }
     Utils.client!.send(td.CheckAuthenticationCode(code: code));
-    if (Utils.authorizationState.runtimeType ==
-        td.AuthorizationStateWaitRegistration) {
-      //TODO make registration page
-      Utils.client!.send(td.RegisterUser(
-          firstName: 'test', lastName: 'test', disableNotification: false));
-    }
-    if (Utils.authorizationState.runtimeType == td.AuthorizationStateReady) {
-      Navigator.pushReplacementNamed(context, '/home');
+    switch (Utils.authorizationState.runtimeType) {
+      case const (td.AuthorizationStateWaitRegistration):
+        //TODO make registration page
+        Utils.client!.send(td.RegisterUser(
+            firstName: 'test', lastName: 'test', disableNotification: false));
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/home',
+          (route) => false,
+        );
+        break;
+      case const (td.AuthorizationStateReady):
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/home',
+          (route) => false,
+        );
+        break;
+      case const (td.AuthorizationStateWaitPassword):
+        //TODO make password page
+        Navigator.pop(context);
+        break;
     }
   }
 

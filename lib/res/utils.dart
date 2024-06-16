@@ -67,15 +67,7 @@ class Utils {
     }
   }
 
-  static void sendNumber(String phoneNumber) {
-    client!.send(td.SetAuthenticationPhoneNumber(phoneNumber: phoneNumber));
-  }
-
   static Future<bool> initialize() async {
-    if (client != null) {
-      false;
-    }
-
     appDocDir = await getApplicationDocumentsDirectory();
 
     client = Client.create();

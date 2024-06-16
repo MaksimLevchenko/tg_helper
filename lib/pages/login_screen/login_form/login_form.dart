@@ -186,19 +186,24 @@ class _LoginFormState extends State<LoginForm> {
             ?.callingCodes
             .first ??
         '';
+    //TODO return prefix
     if (widget._formKey.currentState!.validate()) {
       Utils.client!.send(td.SetAuthenticationPhoneNumber(
           phoneNumber:
               '${Provider.of<Account>(context, listen: false).number}'));
       log(Utils.authorizationState.toString());
-      if (Utils.authorizationState.runtimeType ==
-          td.AuthorizationStateWaitCode) {
-        Navigator.pushNamed(context, '/login/code');
+      switch (Utils.authorizationState.runtimeType) {
+        case const (td.AuthorizationStateWaitCode):
+          Navigator.pushNamed(context, '/login/code');
+          break;
+        case const (td.AuthorizationStateClosed):
+          Utils.initialize();
+          break;
+        default:
+          setState(() {});
       }
-      //Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      setState(() {});
     }
+    //Navigator.pushReplacementNamed(context, '/home');
   }
 
   TextFormField numberField(BorderSide enabledBorderSide) {

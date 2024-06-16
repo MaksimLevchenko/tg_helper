@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_tg_helper/res/countries.dart';
 import 'package:flutter_tg_helper/res/utils.dart';
@@ -11,13 +13,14 @@ class SplashScreen extends StatelessWidget {
     Utils.initialize().then((_) async {
       await CountriesList.loadCountries();
       if (context.mounted) {
-        switch (Utils.authorizationState) {
-          case AuthorizationStateReady():
+        log('auth state after splash is ${Utils.authorizationState.runtimeType}');
+        switch (Utils.authorizationState.runtimeType) {
+          case const (AuthorizationStateReady):
             Navigator.pushReplacementNamed(context, '/home');
             break;
           default:
+            Navigator.pushReplacementNamed(context, '/login');
         }
-        Navigator.pushReplacementNamed(context, '/login');
       }
     });
     return Container(
