@@ -34,6 +34,12 @@ class Utils {
     return Platform.localeName;
   }
 
+  static Future<bool> logOut() async {
+    await client!.send(td.LogOut());
+    await initialize();
+    return true;
+  }
+
   static Future<void> _onAuthorizationUpdate() async {
     if (authorizationState is td.AuthorizationStateWaitTdlibParameters) {
       late final String deviceModel;
@@ -83,6 +89,8 @@ class Utils {
       } else if (event is td.UpdateConnectionState) {
         log('connection state runtime type: ${event.state}');
         connectionState = event.state;
+      } else if (event is td.TdError) {
+        log('error ${event.message}');
       }
     });
     await client!.initialize();

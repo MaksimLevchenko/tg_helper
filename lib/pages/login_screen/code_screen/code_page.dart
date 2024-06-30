@@ -51,34 +51,40 @@ class LoginCodePage extends StatelessWidget {
 
   void onSendTap(BuildContext context) {
     String code = codeController.text;
-    log(code);
+    log('code is $code');
     if (code.length < 3) {
       return;
     }
-    Utils.client!.send(td.CheckAuthenticationCode(code: code));
-    switch (Utils.authorizationState.runtimeType) {
-      case const (td.AuthorizationStateWaitRegistration):
-        //TODO make registration page
-        Utils.client!.send(const td.RegisterUser(
-            firstName: 'test', lastName: 'test', disableNotification: false));
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/home',
-          (route) => false,
-        );
-        break;
-      case const (td.AuthorizationStateReady):
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/home',
-          (route) => false,
-        );
-        break;
-      case const (td.AuthorizationStateWaitPassword):
-        //TODO make password page
-        Navigator.pop(context);
-        break;
-    }
+    Utils.client!.send(td.CheckAuthenticationCode(code: code)).then((answer) {
+      if (answer is td.TdError) {
+        log(answer.message);
+        return;
+      }
+      switch (Utils.authorizationState.runtimeType) {
+        case const (td.AuthorizationStateWaitRegistration):
+          //TODO make registration page
+          Utils.client!.send(const td.RegisterUser(
+              firstName: 'test', lastName: 'test', disableNotification: false));
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/home',
+            (route) => false,
+          );
+          break;
+        case const (td.AuthorizationStateReady):
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/home',
+            (route) => false,
+          );
+          break;
+        case const (td.AuthorizationStateWaitPassword):
+          //TODO make password page
+          Navigator.pop(context);
+          break;
+        case const (td.TdError):
+      }
+    });
   }
 
   @override

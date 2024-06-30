@@ -24,7 +24,7 @@ class SplashScreen extends StatelessWidget {
       }
     });
     return Container(
-      color: Colors.white,
+      color: Colors.amber,
       child: const Center(
         child: CircularProgressIndicator(),
       ),

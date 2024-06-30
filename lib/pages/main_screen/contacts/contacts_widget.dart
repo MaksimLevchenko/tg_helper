@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'dart:math' hide log;
 
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class ChatsPage extends StatelessWidget {
                   userIds: const []))
               .then((_) {
             if (_ is td.TdError) {
-              log(_.message);
+              log('error while creating group ${_.message}');
             }
           });
         },
@@ -30,6 +31,7 @@ class ChatsPage extends StatelessWidget {
   Widget chatList(BuildContext context) {
     td.Chats chats = Provider.of<Chats>(context).chats;
     return ListView.builder(
+      physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: chats.chatIds.length,
       itemBuilder: (context, index) {
@@ -45,9 +47,12 @@ class ChatsPage extends StatelessWidget {
                 late final td.TdObject chatResponse;
                 chatResponse = snapshot.data!;
                 if (chatResponse is td.Chat) {
-                  return ListTile(
-                    title: Text('Chat ${chatResponse.title}'),
-                  );
+                  return InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed('home/chat', arguments: chatId);
+                      },
+                      child: chatTile(chatResponse));
                 } else if (chatResponse is td.TdError) {
                   return ListTile(
                     title: Text('Error: ${chatResponse.message}'),
@@ -63,6 +68,65 @@ class ChatsPage extends StatelessWidget {
     );
   }
 
+  Widget chatTile(td.Chat chat) {
+    late String? subtitle;
+    if (chat.lastMessage?.content is td.MessageText) {
+      subtitle = (chat.lastMessage!.content as td.MessageText).text.text;
+    } else {
+      subtitle = chat.lastMessage?.content.runtimeType.toString();
+    }
+    late final Future<td.TdObject> downloadFile;
+    if (chat.photo != null) {
+      downloadFile = Utils.client!.send(td.DownloadFile(
+        fileId: chat.photo!.small.id,
+        priority: 32,
+        limit: 0,
+        offset: 0,
+        synchronous: true,
+      ));
+    } else {
+      downloadFile = Future.error(Exception('no photo'));
+    }
+    return FutureBuilder<td.TdObject>(
+        future: downloadFile,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            return ListTile(
+              leading: CircularProgressIndicator(),
+              title: Text(chat.title),
+              subtitle: Text(
+                subtitle ?? 'no messages',
+                maxLines: 3,
+              ),
+            );
+          } else if ((snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasError) ||
+              snapshot.data is td.TdError ||
+              !snapshot.hasData) {
+            if (snapshot.data is td.TdError)
+              log((snapshot.data as td.TdError).message);
+            return ListTile(
+              leading: null,
+              title: Text(chat.title),
+              subtitle: Text(
+                subtitle ?? 'no messages',
+                maxLines: 3,
+              ),
+            );
+          } else {
+            log(snapshot.data.runtimeType.toString());
+            return ListTile(
+              leading: Image.file(File(chat.photo!.small.local.path)),
+              title: Text(chat.title),
+              subtitle: Text(
+                subtitle ?? 'no messages',
+                maxLines: 3,
+              ),
+            );
+          }
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final chats = Chats.create();
@@ -73,7 +137,14 @@ class ChatsPage extends StatelessWidget {
           return ListenableProvider(
             create: (context) => snapshot.data!,
             child: Builder(builder: (context) {
-              return chatList(context);
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    chatAdd(context),
+                    chatList(context),
+                  ],
+                ),
+              );
             }),
           );
         } else {

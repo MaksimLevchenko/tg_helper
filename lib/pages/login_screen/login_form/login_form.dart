@@ -188,20 +188,29 @@ class _LoginFormState extends State<LoginForm> {
         '';
     //TODO return prefix
     if (widget._formKey.currentState!.validate()) {
-      Utils.client!.send(td.SetAuthenticationPhoneNumber(
-          phoneNumber:
-              '${Provider.of<Account>(context, listen: false).number}'));
-      log(Utils.authorizationState.toString());
-      switch (Utils.authorizationState.runtimeType) {
-        case const (td.AuthorizationStateWaitCode):
-          Navigator.pushNamed(context, '/login/code');
-          break;
-        case const (td.AuthorizationStateClosed):
-          Utils.initialize();
-          break;
-        default:
-          setState(() {});
-      }
+      Utils.client!
+          .send(td.SetAuthenticationPhoneNumber(
+              phoneNumber:
+                  '${Provider.of<Account>(context, listen: false).number}'))
+          .then((answer) {
+        if (answer is td.TdError) {
+          log('login answer: ${answer.message}');
+          return;
+        }
+        switch (Utils.authorizationState.runtimeType) {
+          case const (td.AuthorizationStateWaitCode):
+            Navigator.pushNamed(context, '/login/code');
+            break;
+          case const (td.AuthorizationStateClosed):
+            Utils.initialize();
+            break;
+          case const (td.TdError):
+            log('after sending number ${(answer as td.TdError).message}');
+            break;
+          default:
+            setState(() {});
+        }
+      });
     }
     //Navigator.pushReplacementNamed(context, '/home');
   }
